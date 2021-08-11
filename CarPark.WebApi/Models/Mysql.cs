@@ -112,7 +112,7 @@ namespace CarPark.WebApi.Models
                         {
                             EnterId = dataReader.GetInt32("enter_id"),
                             Plate = dataReader.GetString("plate"),
-                            InTime = dataReader.GetString("in_time"),
+                            InTime = dataReader.GetDateTime("in_time"),
                             IsEarlyBird = dataReader.GetBoolean("is_earlybird"),
                             IsPaid = dataReader.GetBoolean("is_paid"),
                             Fees = dataReader.GetFloat("fees")
