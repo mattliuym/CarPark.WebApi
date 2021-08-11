@@ -90,7 +90,8 @@ namespace CarPark.WebApi.Models
             
             return stuInfoList;
         }
-
+        
+        //Search plate from db
         public List<SearchPlate> ExecuteSearchPlate(string str)
         { 
             MySqlConnection con = new MySqlConnection(constr);
@@ -111,7 +112,7 @@ namespace CarPark.WebApi.Models
                         {
                             EnterId = dataReader.GetInt32("enter_id"),
                             Plate = dataReader.GetString("plate"),
-                            InTime = dataReader.GetDateTime("in_time"),
+                            InTime = dataReader.GetString("in_time"),
                             IsEarlyBird = dataReader.GetBoolean("is_earlybird"),
                             IsPaid = dataReader.GetBoolean("is_paid"),
                             Fees = dataReader.GetFloat("fees")
@@ -132,6 +133,56 @@ namespace CarPark.WebApi.Models
             // return stuInfoList
             
             return plateInfo;
+            
+        }
+        //Get pricing info
+        public List<Pricing> ExecuteGetPricing(string str)
+        { 
+            MySqlConnection con = new MySqlConnection(constr);
+            MySqlDataReader dataReader = null;
+            List<Pricing> pricingInfo = null;//return value
+            try
+            {
+                con.Open();
+                string sql = str;
+                MySqlCommand command = new MySqlCommand(sql, con);
+                dataReader = command.ExecuteReader();
+                if (dataReader != null && dataReader.HasRows)
+                {
+                    pricingInfo = new List<Pricing>();
+                    while (dataReader.Read())
+                    {
+                        pricingInfo.Add(new Pricing()
+                        {
+                            PricingId = dataReader.GetInt32("pricing_id"),
+                            PricingName = dataReader.GetString("pricing_name"),
+                            TotalPark = dataReader.GetInt32("total_park"),
+                            //OpenTime = dataReader.GetString("open_time"),
+                            OpenTime = dataReader.IsDBNull("open_time") ? null : dataReader.GetString("open_time"),
+                            CloseTime = dataReader.IsDBNull("close_time") ? null : dataReader.GetString("close_time"),
+                            IsTwentyFour = dataReader.GetBoolean("is_twentyfour"),
+                            IsFlatRate = dataReader.GetBoolean("is_flatrate"),
+                            PricePh = dataReader.GetFloat("price_ph"),
+                            HaveEarlyBird = dataReader.GetBoolean("have_earlybird"),
+                            EarlyBirdPrice = dataReader.IsDBNull("earlybird_price") ? 0 : dataReader.GetFloat("earlybird_price"),
+                            HaveMax = dataReader.GetBoolean("have_max"),
+                            MaxPrice = dataReader.IsDBNull("max_price") ? 0 : dataReader.GetFloat("max_price"),
+                            FreeBefore = dataReader.GetInt32("free_before"),
+                            InUse = dataReader.GetBoolean("in_use")
+                        });
+                    }
+                }
+                dataReader.Close();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
+            finally
+            {
+                con.Close();
+            }
+            return pricingInfo;
             
         }
 
