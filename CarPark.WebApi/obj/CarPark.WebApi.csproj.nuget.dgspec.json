@@ -1,0 +1,73 @@
+{
+  "format": 1,
+  "restore": {
+    "/Users/liuyiming/RiderProjects/CarPark.WebApi/CarPark.WebApi/CarPark.WebApi.csproj": {}
+  },
+  "projects": {
+    "/Users/liuyiming/RiderProjects/CarPark.WebApi/CarPark.WebApi/CarPark.WebApi.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "/Users/liuyiming/RiderProjects/CarPark.WebApi/CarPark.WebApi/CarPark.WebApi.csproj",
+        "projectName": "CarPark.WebApi",
+        "projectPath": "/Users/liuyiming/RiderProjects/CarPark.WebApi/CarPark.WebApi/CarPark.WebApi.csproj",
+        "packagesPath": "/Users/liuyiming/.nuget/packages/",
+        "outputPath": "/Users/liuyiming/RiderProjects/CarPark.WebApi/CarPark.WebApi/obj/",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "/Users/liuyiming/.nuget/NuGet/NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "net5.0"
+        ],
+        "sources": {
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net5.0": {
+            "targetAlias": "net5.0",
+            "projectReferences": {}
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "net5.0": {
+          "targetAlias": "net5.0",
+          "dependencies": {
+            "MySql.Data": {
+              "target": "Package",
+              "version": "[8.0.26, )"
+            },
+            "Swashbuckle.AspNetCore": {
+              "target": "Package",
+              "version": "[5.6.3, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.AspNetCore.App": {
+              "privateAssets": "none"
+            },
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/5.0.301/RuntimeIdentifierGraph.json"
+        }
+      }
+    }
+  }
+}
