@@ -11,11 +11,11 @@ namespace CarPark.WebApi
         public String CloseTime { get; set; }
         public Boolean IsTwentyFour { get; set; }
         public Boolean IsFlatRate { get; set; }
-        public float PricePh { get; set; }
+        public decimal PricePh { get; set; }
         public Boolean HaveEarlyBird { get; set; }
-        public float EarlyBirdPrice { get; set; }
+        public decimal EarlyBirdPrice { get; set; }
         public Boolean HaveMax { get; set; }
-        public float MaxPrice { get; set; }
+        public decimal MaxPrice { get; set; }
         public int FreeBefore { get; set; }
         public Boolean InUse { get; set; }
     }

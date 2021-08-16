@@ -21,7 +21,7 @@ namespace CarPark.WebApi.Controllers
         public IEnumerable<Pricing> GetPricing()
         {
             Mysql dbcontent = new Mysql();
-            var res = dbcontent.ExecuteGetPricing("SELECT * FROM parkinglot.pricing_plans where in_use=1");
+            var res = dbcontent.ExecuteGetPricing();
             return Enumerable.Range(1, res.Count).Select(index => new Pricing()
             {
                 PricingId = res[0].PricingId,

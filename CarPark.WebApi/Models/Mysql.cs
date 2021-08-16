@@ -115,7 +115,8 @@ namespace CarPark.WebApi.Models
                             InTime = dataReader.GetDateTime("in_time"),
                             IsEarlyBird = dataReader.GetBoolean("is_earlybird"),
                             IsPaid = dataReader.GetBoolean("is_paid"),
-                            Fees = dataReader.GetFloat("fees")
+                            Fees = dataReader.GetDecimal("fees"),
+                            isLeft = dataReader.GetBoolean("is_left")
                         });
                         //stuInfoList = dataReader.GetString("name");
                     }
@@ -136,7 +137,7 @@ namespace CarPark.WebApi.Models
             
         }
         //Get pricing info
-        public List<Pricing> ExecuteGetPricing(string str)
+        public List<Pricing> ExecuteGetPricing()
         { 
             MySqlConnection con = new MySqlConnection(constr);
             MySqlDataReader dataReader = null;
@@ -144,7 +145,7 @@ namespace CarPark.WebApi.Models
             try
             {
                 con.Open();
-                string sql = str;
+                string sql = "SELECT * FROM parkinglot.pricing_plans where in_use=1";
                 MySqlCommand command = new MySqlCommand(sql, con);
                 dataReader = command.ExecuteReader();
                 if (dataReader != null && dataReader.HasRows)
@@ -162,11 +163,11 @@ namespace CarPark.WebApi.Models
                             CloseTime = dataReader.IsDBNull("close_time") ? null : dataReader.GetString("close_time"),
                             IsTwentyFour = dataReader.GetBoolean("is_twentyfour"),
                             IsFlatRate = dataReader.GetBoolean("is_flatrate"),
-                            PricePh = dataReader.GetFloat("price_ph"),
+                            PricePh = dataReader.GetDecimal("price_ph"),
                             HaveEarlyBird = dataReader.GetBoolean("have_earlybird"),
-                            EarlyBirdPrice = dataReader.IsDBNull("earlybird_price") ? 0 : dataReader.GetFloat("earlybird_price"),
+                            EarlyBirdPrice = dataReader.IsDBNull("earlybird_price") ? 0 : dataReader.GetDecimal("earlybird_price"),
                             HaveMax = dataReader.GetBoolean("have_max"),
-                            MaxPrice = dataReader.IsDBNull("max_price") ? 0 : dataReader.GetFloat("max_price"),
+                            MaxPrice = dataReader.IsDBNull("max_price") ? 0 : dataReader.GetDecimal("max_price"),
                             FreeBefore = dataReader.GetInt32("free_before"),
                             InUse = dataReader.GetBoolean("in_use")
                         });
@@ -185,6 +186,25 @@ namespace CarPark.WebApi.Models
             return pricingInfo;
             
         }
+        
+        /* Get Pricing plan number  */
+        /*public int ObtainPricingId()
+        {
+            MySqlConnection con = new MySqlConnection(constr);
+            MySqlDataReader dataReader = null;
+            int pid = 0;
+            try
+            {
+                con.Open();
+                string sql = "SELECT pricing_id FROM parkinglot.pricing_plans WHERE in_use=true";
+                
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+        }*/
 
     }
 }
