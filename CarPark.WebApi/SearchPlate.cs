@@ -12,22 +12,60 @@ namespace CarPark.WebApi
         public Boolean IsEarlyBird { get; set; }
         public Boolean IsPaid { get; set; }
         public decimal Fees { get; set; }
-        
         public Boolean isLeft { get; set; }
+        public double timeLength { get; set; }
         
-        /* Calculate current parking fees*/
-        public float ObtainFees(DateTime tm)
+        /* Calculate current parking fees(only for non-monthly pay cars)*/
+        public decimal ObtainFees(double tm)
         {
+            decimal fees;
             Mysql sqlData = new Mysql();
             List<Pricing> arrPricing = sqlData.ExecuteGetPricing();
-            //current time
-            DateTime currentTime = DateTime.Now;
-            //parking time
-            TimeSpan diff = currentTime - tm;
-            //parking minutes.
-            var mindiff = Math.Truncate(diff.TotalMinutes); 
+            Pricing priceInfo = arrPricing[0];
 
-            return 0;
+            //verify if the car needs to pay
+            if (tm <= priceInfo.FreeBefore)
+            {
+                return 0;
+            }
+            //check if have a flat rate
+            if (priceInfo.IsFlatRate)
+            {
+                fees = priceInfo.PricePh;
+                return fees;
+            }
+            //calculate the fee by hour
+            decimal fee = (decimal)tm / 60 * priceInfo.PricePh;
+            //if the car belongs to early bird policy
+            if (IsEarlyBird)
+            {
+                if (fee < priceInfo.EarlyBirdPrice)
+                {
+                    fees=Math.Round(fee,2);
+                }
+                else
+                {
+                    fees = priceInfo.EarlyBirdPrice;
+                }
+                return fees;
+            }
+            //if reach the max charge.
+            if (priceInfo.HaveMax)
+            {
+                if (fee > priceInfo.MaxPrice)
+                {
+                    fees = priceInfo.MaxPrice;
+                }
+                else
+                {
+                    fees=Math.Round(fee,2);
+                }
+
+                return fees;
+            }
+            //else 
+            fees=Math.Round(fee,2);
+            return fees;
         }
     }
     
