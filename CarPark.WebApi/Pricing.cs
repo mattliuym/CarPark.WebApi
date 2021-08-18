@@ -17,6 +17,8 @@ namespace CarPark.WebApi
         public Boolean HaveMax { get; set; }
         public decimal MaxPrice { get; set; }
         public int FreeBefore { get; set; }
+        public Boolean IsMonthly { get; set; }
+        public decimal MonthlyFees { get; set; }
         public Boolean InUse { get; set; }
     }
 }

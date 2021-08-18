@@ -169,7 +169,9 @@ namespace CarPark.WebApi.Models
                             HaveMax = dataReader.GetBoolean("have_max"),
                             MaxPrice = dataReader.IsDBNull("max_price") ? 0 : dataReader.GetDecimal("max_price"),
                             FreeBefore = dataReader.GetInt32("free_before"),
-                            InUse = dataReader.GetBoolean("in_use")
+                            InUse = dataReader.GetBoolean("in_use"),
+                            IsMonthly = dataReader.GetBoolean("is_paymonthly"),
+                            MonthlyFees = dataReader.IsDBNull("monthly_fee")? 0 : dataReader.GetDecimal("monthly_fee")
                         });
                     }
                 }

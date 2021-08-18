@@ -37,6 +37,8 @@ namespace CarPark.WebApi.Controllers
                 EarlyBirdPrice = res[0].EarlyBirdPrice,
                 MaxPrice = res[0].MaxPrice,
                 FreeBefore = res[0].FreeBefore,
+                IsMonthly = res[0].IsMonthly,
+                MonthlyFees = res[0].MonthlyFees,
                 InUse = res[0].InUse
             }).ToArray();
         }
