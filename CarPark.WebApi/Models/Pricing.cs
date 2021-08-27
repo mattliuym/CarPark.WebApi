@@ -1,6 +1,6 @@
 using System;
 
-namespace CarPark.WebApi
+namespace CarPark.WebApi.Models
 {
     public class Pricing
     {

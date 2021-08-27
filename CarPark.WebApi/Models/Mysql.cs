@@ -15,7 +15,7 @@ namespace CarPark.WebApi.Models
     	private static string constr = "server=127.0.0.1;port=3306;database=parkinglot;user=root;password=mm970708";
 		
 		// void type： update or insert or delete
-		public void ExecuteNonQuery(string str)
+		public string ExecuteNonQuery(string str)
         {
             var con = new MySqlConnection(constr);
             try
@@ -28,10 +28,11 @@ namespace CarPark.WebApi.Models
                 // string sql= "insert into ustudent(sid, sname, ssexy) VALUE (@sid,@sname,@ssexy);
                 MySqlCommand command = new MySqlCommand(sql, con);
                 command.ExecuteNonQuery();
+                return "Success";
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.Message);
+                return e.Message;
             }
             finally
             {

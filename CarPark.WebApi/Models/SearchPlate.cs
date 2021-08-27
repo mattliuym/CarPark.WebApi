@@ -1,8 +1,7 @@
 using System;
 using System.Collections.Generic;
-using CarPark.WebApi.Models;
 
-namespace CarPark.WebApi
+namespace CarPark.WebApi.Models
 {
     public class SearchPlate
     {
