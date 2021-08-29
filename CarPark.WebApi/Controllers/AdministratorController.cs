@@ -48,8 +48,25 @@ namespace CarPark.WebApi.Controllers
         [HttpPost]
         public LoginStatus LoginAccount([FromBody] Login account)
         {
-            
-            return null;
+            Mysql sqlContent = new Mysql();
+            var res = sqlContent.VerifyLogin(account.UserName, account.Pwd);
+            var tokenStatus=sqlContent.ExecuteNonQuery(
+                    $"UPDATE `parkinglot`.`admin_table` SET `token` = '{res.result.Token}' WHERE (`user_id` = '{res.info[0].UserId}');");
+            if (tokenStatus == "Success")
+            {
+                return res;
+            }
+            return new LoginStatus()
+                {
+                    Status = false,
+                    info = null,
+                    result = new DataResult()
+                    {
+                        Token = null,
+                        Success = false,
+                        Message = "Unsuccessful to set token, please login again"
+                    }
+                };
         }
     }
 }

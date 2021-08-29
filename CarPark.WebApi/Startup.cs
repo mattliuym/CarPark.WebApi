@@ -12,7 +12,6 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 
-
 namespace CarPark.WebApi
 {
     public class Startup
@@ -44,6 +43,7 @@ namespace CarPark.WebApi
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "CarPark.WebApi v1"));
             }
+
 
             app.UseHttpsRedirection();
 

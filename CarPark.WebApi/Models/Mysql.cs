@@ -5,6 +5,7 @@ using System.Data;
 using Microsoft.AspNetCore.Mvc;
 using MySql.Data;
 using MySql.Data.MySqlClient;
+using MySqlX.XDevAPI.Common;
 
 
 namespace CarPark.WebApi.Models
@@ -189,7 +190,67 @@ namespace CarPark.WebApi.Models
             return pricingInfo;
             
         }
-        
+
+        public LoginStatus VerifyLogin(string userName,string pwd)
+        {
+            MySqlConnection con = new MySqlConnection(constr);
+            MySqlDataReader dataReader = null;
+            List<LoginInfo> loginInfo = null;//return value
+            DataResult result = new DataResult();
+            bool status = false;
+            try
+            {
+                con.Open();
+                string sql =$"Select * From parkinglot.admin_table where user_name='{userName}' && pwd='{pwd}' ";
+                MySqlCommand command = new MySqlCommand(sql, con);
+                dataReader = command.ExecuteReader();
+                if (dataReader != null && dataReader.HasRows)
+                {
+                    status = true;
+                    loginInfo = new List<LoginInfo>();
+                    while (dataReader.Read())
+                    {
+                        loginInfo.Add(new LoginInfo()
+                        {
+                            UserName = dataReader.GetString("user_name"),
+                            UserId = dataReader.GetInt32("user_id"),
+                            Pwd = dataReader.GetString("pwd")
+                        });
+                    }
+                    var payload = new Dictionary<string, object>
+                    {
+                        { "username",loginInfo[0].UserName+DateTime.Now},
+                        { "pwd", loginInfo[0].Pwd}
+                    };
+                    result.Token = JwtHelp.SetJwtEncode(payload);
+                    result.Success = true;
+                    result.Message = "成功";
+                }
+                else
+                {
+                    status = false;
+                    loginInfo = null;
+                    result.Message = "Please Confirm your username or password!";
+                    result.Success = false;
+                    result.Token = null;
+                }
+                dataReader.Close();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
+            finally
+            {
+                con.Close();
+            }
+            return new LoginStatus()
+            {
+                Status = status,
+                info=loginInfo,
+                result = result
+            };
+        } 
         /* Get Pricing plan number  */
         /*public int ObtainPricingId()
         {

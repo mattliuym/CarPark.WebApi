@@ -38,6 +38,10 @@
         "net5.0": {
           "targetAlias": "net5.0",
           "dependencies": {
+            "JWT": {
+              "target": "Package",
+              "version": "[8.4.0-beta1, )"
+            },
             "MySql.Data": {
               "target": "Package",
               "version": "[8.0.26, )"
