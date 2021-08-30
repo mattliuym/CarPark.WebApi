@@ -1,5 +1,7 @@
 
 using System.Collections.Generic;
+using System.Data;
+using System.Formats.Asn1;
 using System.Runtime.InteropServices;
 
 namespace CarPark.WebApi.Models
@@ -17,6 +19,8 @@ namespace CarPark.WebApi.Models
         public string UserName { get; set; }
         public string Email { get; set; }
         public string Pwd { get; set; }
+        
+        public string Phone { get; set; }
     }
 
     public class SignUp
