@@ -247,28 +247,60 @@ namespace CarPark.WebApi.Models
             return new LoginStatus()
             {
                 Status = status,
-                info=loginInfo,
-                result = result
+                Info=loginInfo,
+                Result = result
             };
-        } 
-        /* Get Pricing plan number  */
-        /*public int ObtainPricingId()
+        }
+
+        public AdministratorStatus VerifyToken(string token)
         {
             MySqlConnection con = new MySqlConnection(constr);
             MySqlDataReader dataReader = null;
-            int pid = 0;
+            AdministratorStatus verifyStatus = new AdministratorStatus();
+            Administrator headerInfo = null;//return value
             try
             {
                 con.Open();
-                string sql = "SELECT pricing_id FROM parkinglot.pricing_plans WHERE in_use=true";
+                string sql =$"Select * From parkinglot.admin_table where token='{token}' ";
+                MySqlCommand command = new MySqlCommand(sql, con);
+                dataReader = command.ExecuteReader();
+                if (dataReader != null && dataReader.HasRows)
+                {
+                    while (dataReader.Read())
+                    {
+                        headerInfo=(new Administrator()
+                        {
+                            UserId = dataReader.GetInt32("user_id"),
+                            Email = dataReader.GetString("email"),
+                            Phone = dataReader.GetString("phone"),
+                            Pwd = dataReader.GetString("pwd"),
+                            UserName = dataReader.GetString("user_name")
+                        });
+                    }
+                    verifyStatus.Status = true;
+                    verifyStatus.User = headerInfo;
+                }
+                else
+                {
+                    verifyStatus.Status = false;
+                    verifyStatus.Error = "Please check your login status";
+                }
                 
+               
+                dataReader.Close();
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
+                verifyStatus.Status = false;
+                verifyStatus.Error = e.Message;
                 throw;
             }
-        }*/
+            finally
+            {
+                con.Close();
+            }
+            return verifyStatus;
+        }
 
     }
 }

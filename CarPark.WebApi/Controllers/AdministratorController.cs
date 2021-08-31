@@ -14,7 +14,7 @@ namespace CarPark.WebApi.Controllers
 {
     [ApiController]
     [Route("api/[controller]/[action]")]
-    public class AdministratorController : Controller
+    public class AdministratorController : ControllerBase
     {
         //sign up a new user 
         //para: username,email address, password
@@ -62,16 +62,13 @@ namespace CarPark.WebApi.Controllers
         [HttpPost]
         public LoginStatus LoginAccount([FromBody] Login account)
         {
-            //get cookie from request's header
-            //string cookie = Request.Cookies["token"];
-            //Console.WriteLine("@ "+cookie);
             Mysql sqlContent = new Mysql();
             var res = sqlContent.VerifyLogin(account.UserName, account.Pwd);//verify user's account
             if (res.Status == true)
             {
                 //get token
                 var tokenStatus=sqlContent.ExecuteNonQuery(
-                    $"UPDATE `parkinglot`.`admin_table` SET `token` = '{res.result.Token}' WHERE (`user_id` = '{res.info[0].UserId}');"); 
+                    $"UPDATE `parkinglot`.`admin_table` SET `token` = '{res.Result.Token}' WHERE (`user_id` = '{res.Info[0].UserId}');"); 
                 if (tokenStatus == "Success")
                 {
                     //if get token successfully, then return true result
@@ -81,8 +78,8 @@ namespace CarPark.WebApi.Controllers
                 return new LoginStatus()
                         {
                             Status = false,
-                            info = null,
-                            result = new DataResult()
+                            Info = null,
+                            Result = new DataResult()
                             {
                                 Token = null,
                                 Success = false,

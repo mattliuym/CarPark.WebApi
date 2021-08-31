@@ -12,6 +12,7 @@ namespace CarPark.WebApi.Models
         public string UserName { get; set; }
         public string Email { get; set; }
         public string Pwd { get; set; }
+        public string Phone { get; set; }
     }
 
     public class SignUpAdmin
@@ -48,8 +49,14 @@ namespace CarPark.WebApi.Models
     public class LoginStatus
     {
         public bool Status { get; set; }
-        public List<LoginInfo> info { get; set;}
-        public DataResult result { get; set; } 
-        
+        public List<LoginInfo> Info { get; set;}
+        public DataResult Result { get; set; }
+    }
+
+    public class AdministratorStatus
+    {
+        public bool Status { get; set; }
+        public Administrator User { get; set; }
+        public string Error { get; set; }
     }
 }
