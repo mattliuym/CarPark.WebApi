@@ -330,10 +330,9 @@ namespace CarPark.WebApi.Models
                     }
                     //determine whether expired or not
                     //current time
-                    var currentTime = DateTime.Now;
-                    if (currentTime.CompareTo(carinfo.Expiry)>=0)
+                    var currentTime = Convert.ToDateTime(DateTime.Now.ToLongDateString());
+                    if (currentTime.CompareTo(carinfo.Expiry)>0)
                     {
-                        Console.WriteLine("&  it's expired");
                         //reset the lease status to false
                         ExecuteNonQuery($"UPDATE `parkinglot`.`parking_lease` SET `is_valid` = 0 WHERE (`plate` = '{plate}');");
                         return false;

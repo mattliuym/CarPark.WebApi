@@ -25,7 +25,7 @@ namespace CarPark.WebApi.Controllers
             var res = sqlcontent.ExecuteSearchPlate($"SELECT * FROM parkinglot.plate where plate='{s}'&& is_left=0;");
             //verify lease condition.
             var lease = sqlcontent.VerifyLease(res[0].Plate);
-            Console.WriteLine("@ "+lease);
+            //reset lease condition
             if (lease)
             {
                 sqlcontent.ExecuteNonQuery($"UPDATE `parkinglot`.`plate` SET `is_leased` = '1', `is_paid` = '1' WHERE (`enter_id` = '{res[0].EnterId}');");
@@ -53,6 +53,7 @@ namespace CarPark.WebApi.Controllers
                     InTime = res[index - 1].InTime,
                     IsEarlyBird = res[index - 1].IsEarlyBird,
                     IsPaid = res[index - 1].IsPaid,
+                    IsMonthly = res[index-1].IsMonthly,
                     timeLength = mindiff
                 }).ToArray();
             //calculate the parking charge and store into database
@@ -65,6 +66,7 @@ namespace CarPark.WebApi.Controllers
                 InTime = res[index-1].InTime,
                 IsEarlyBird = res[index-1].IsEarlyBird,
                 IsPaid = res[index-1].IsPaid,
+                IsMonthly = res[index-1].IsMonthly,
                 timeLength = mindiff
             }).ToArray();
         }
@@ -79,6 +81,17 @@ namespace CarPark.WebApi.Controllers
             var currentTime = DateTime.Now;
             foreach (var t in res)
             {
+                var lease = sqlcontent.VerifyLease(t.Plate);
+                if (lease)
+                {
+                    t.IsPaid = true;
+                    t.IsMonthly = true;
+                }
+                else
+                {
+                    t.IsPaid = false;
+                    t.IsMonthly = false;
+                }
                 if (t.IsPaid==false)//if the car have yet paid, then calculate the parking fee
                 {
                     var diff = currentTime - t.InTime;
@@ -96,6 +109,7 @@ namespace CarPark.WebApi.Controllers
                 InTime = res[index-1].InTime,
                 IsEarlyBird = res[index-1].IsEarlyBird,
                 IsPaid = res[index-1].IsPaid,
+                IsMonthly = res[index-1].IsMonthly,
                 timeLength = res[index-1].timeLength
             });
         }
