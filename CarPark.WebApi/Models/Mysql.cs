@@ -117,6 +117,7 @@ namespace CarPark.WebApi.Models
                             InTime = dataReader.GetDateTime("in_time"),
                             IsEarlyBird = dataReader.GetBoolean("is_earlybird"),
                             IsPaid = dataReader.GetBoolean("is_paid"),
+                            IsMonthly = dataReader.GetBoolean("is_leased"),
                             Fees = dataReader.GetDecimal("fees"),
                             isLeft = dataReader.GetBoolean("is_left")
                         });
@@ -228,8 +229,6 @@ namespace CarPark.WebApi.Models
                 }
                 else
                 {
-                    status = false;
-                    loginInfo = null;
                     result.Message = "Please Confirm your username or password!";
                     result.Success = false;
                     result.Token = null;
@@ -302,5 +301,55 @@ namespace CarPark.WebApi.Models
             return verifyStatus;
         }
 
+        public bool VerifyLease(string plate)
+        {
+            MySqlConnection con = new MySqlConnection(constr);
+            MySqlDataReader dataReader = null;
+            var carinfo = new Lease();
+            try
+            {
+                con.Open();
+                string sql = $"SELECT * FROM parkinglot.parking_lease WHERE plate = '{plate}'";
+                MySqlCommand command = new MySqlCommand(sql, con);
+                dataReader = command.ExecuteReader();
+                if (dataReader != null && dataReader.HasRows)
+                {
+                    while (dataReader.Read())
+                    {
+                        carinfo=(new Lease()
+                        {
+                            Plate = dataReader.GetString("plate"),
+                            Status = dataReader.GetBoolean("is_valid"),
+                            Expiry = dataReader.GetDateTime("expired_date")
+                        });
+                    }
+                    //if expired, then return status
+                    if (!carinfo.Status)
+                    {
+                        return false;
+                    }
+                    //determine whether expired or not
+                    //current time
+                    var currentTime = DateTime.Now;
+                    if (currentTime.CompareTo(carinfo.Expiry)>=0)
+                    {
+                        Console.WriteLine("&  it's expired");
+                        //reset the lease status to false
+                        ExecuteNonQuery($"UPDATE `parkinglot`.`parking_lease` SET `is_valid` = 0 WHERE (`plate` = '{plate}');");
+                        return false;
+                    }
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+            return true;
+        }
     }
 }

@@ -31,7 +31,7 @@ namespace CarPark.WebApi.Controllers
                 res.Result = "Please enter correct email address";
                 return res;
             }
-            var result = dbcontent.ExecuteNonQuery($"INSERT INTO `parkinglot`.`admin_table` (`user_name`, `pwd`, `email`,`phone`) VALUES ('{account.UserName}', '{account.Pwd}', '{account.Email}','{account.Phone}');");
+            var result = dbcontent.ExecuteNonQuery($"INSERT INTO `parkinglot`.`admin_table` (`user_name`, `pwd`, `email`,`phone`) VALUES ('{account.UserName}', '{MD5Cryption.MD5Hash(account.Pwd)}', '{account.Email}','{account.Phone}');");
             if (result == "Success")
             {
                 res.Status = true;
@@ -63,10 +63,10 @@ namespace CarPark.WebApi.Controllers
         public LoginStatus LoginAccount([FromBody] Login account)
         {
             Mysql sqlContent = new Mysql();
-            var res = sqlContent.VerifyLogin(account.UserName, account.Pwd);//verify user's account
-            if (res.Status == true)
+            var res = sqlContent.VerifyLogin(account.UserName, MD5Cryption.MD5Hash(account.Pwd));//verify user's account and get token
+            if (res.Status)
             {
-                //get token
+                //save token 
                 var tokenStatus=sqlContent.ExecuteNonQuery(
                     $"UPDATE `parkinglot`.`admin_table` SET `token` = '{res.Result.Token}' WHERE (`user_id` = '{res.Info[0].UserId}');"); 
                 if (tokenStatus == "Success")

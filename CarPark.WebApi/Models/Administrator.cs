@@ -41,7 +41,6 @@ namespace CarPark.WebApi.Models
     {
         public string UserName { get; set; }
         public int UserId { get; set; }
-        
         public string Pwd { get; set; }
         //public string Token { get; set; }
     }

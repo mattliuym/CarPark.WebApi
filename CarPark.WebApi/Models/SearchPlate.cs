@@ -10,10 +10,11 @@ namespace CarPark.WebApi.Models
         public DateTime InTime { get; set; }
         public Boolean IsEarlyBird { get; set; }
         public Boolean IsPaid { get; set; }
+        public Boolean IsMonthly { get; set; }
         public decimal Fees { get; set; }
         public Boolean isLeft { get; set; }
         public double timeLength { get; set; }
-        
+
         /* Calculate current parking fees(only for non-monthly pay cars)*/
         public decimal ObtainFees(double tm)
         {
