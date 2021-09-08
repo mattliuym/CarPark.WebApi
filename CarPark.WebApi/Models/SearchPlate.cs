@@ -68,6 +68,11 @@ namespace CarPark.WebApi.Models
             return fees;
         }
     }
-    
-    
+
+    public class CurrentPlate
+    {
+        public bool Status { get; set; }
+        public IEnumerable<SearchPlate> AllPlate{get;set;}
+        public string Error { get; set; }
+    }
 }

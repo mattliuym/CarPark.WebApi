@@ -73,15 +73,31 @@ namespace CarPark.WebApi.Controllers
 
         [HttpGet]
         //Get all current parking car info
-        public IEnumerable<SearchPlate> GetCurrentInfo()
+        public CurrentPlate GetCurrentInfo()
         {
+            //verify login status
+            string token = Request.Cookies["token"];
             var sqlcontent = new Mysql();
+            var tk = sqlcontent.VerifyToken(token);
+            if (!tk.Status)
+            {
+                return new CurrentPlate
+                {
+                    Status = false,
+                    Error = "Error, please login again!"
+
+                };
+            }
+            //get plate info
             var res = sqlcontent.ExecuteSearchPlate("SELECT * FROM parkinglot.plate WHERE 'is_left'=0");
             //current time
             var currentTime = DateTime.Now;
             foreach (var t in res)
             {
+                var diff = currentTime - t.InTime;
+                var mindiff = Math.Truncate(diff.TotalMinutes);
                 var lease = sqlcontent.VerifyLease(t.Plate);
+                //check lease status
                 if (lease)
                 {
                     t.IsPaid = true;
@@ -89,29 +105,33 @@ namespace CarPark.WebApi.Controllers
                 }
                 else
                 {
+                    sqlcontent.ExecuteNonQuery($"UPDATE `parkinglot`.`plate` SET `is_leased` = '1', `is_paid` = '1' WHERE (`enter_id` = '{t.EnterId}');");
                     t.IsPaid = false;
                     t.IsMonthly = false;
                 }
-                if (t.IsPaid==false)//if the car have yet paid, then calculate the parking fee
+                if (!t.IsPaid)//if the car have yet paid, then calculate the parking fee
                 {
-                    var diff = currentTime - t.InTime;
-                    var mindiff = Math.Truncate(diff.TotalMinutes);
                     sqlcontent.ExecuteNonQuery($"UPDATE `parkinglot`.`plate` SET `fees` = '{t.ObtainFees(mindiff)}' WHERE (`enter_id` = '{t.EnterId}');");
                     t.Fees = t.ObtainFees(mindiff);
-                    t.timeLength = mindiff;
                 }
+                t.timeLength = mindiff;
             }
-            return Enumerable.Range(1,res.Count).Select(index=>new SearchPlate()
+
+            return new CurrentPlate()
             {
-                Plate = res[index-1].Plate,
-                EnterId = res[index-1].EnterId,
-                Fees = res[index-1].Fees,
-                InTime = res[index-1].InTime,
-                IsEarlyBird = res[index-1].IsEarlyBird,
-                IsPaid = res[index-1].IsPaid,
-                IsMonthly = res[index-1].IsMonthly,
-                timeLength = res[index-1].timeLength
-            });
+                AllPlate = Enumerable.Range(1, res.Count).Select(index => new SearchPlate()
+                {
+                    Plate = res[index - 1].Plate,
+                    EnterId = res[index - 1].EnterId,
+                    Fees = res[index - 1].Fees,
+                    InTime = res[index - 1].InTime,
+                    IsEarlyBird = res[index - 1].IsEarlyBird,
+                    IsPaid = res[index - 1].IsPaid,
+                    IsMonthly = res[index - 1].IsMonthly,
+                    timeLength = res[index - 1].timeLength
+                }),
+                Status = true
+            };
         }
        
 
