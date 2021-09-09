@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Microsoft.OpenApi.Models;
 
 namespace CarPark.WebApi.Controllers
 {
@@ -133,7 +134,68 @@ namespace CarPark.WebApi.Controllers
                 Status = true
             };
         }
-       
 
+        [HttpPost]
+        public AddPlate AddPlate([FromBody] Plate plate)
+
+        {
+            string token = Request.Cookies["token"];
+            var sqlcontent = new Mysql();
+            var tk = sqlcontent.VerifyToken(token);
+            if (!tk.Status)
+            {
+                return new AddPlate()
+                {
+                    Status = false,
+                    AddSuccess = false,
+                    Error = "Error, please login again!"
+
+                };
+            }
+            var currentTime = DateTime.Now;
+            //determine if monthly paid
+            var lease = sqlcontent.VerifyLease(plate.PlateNum);
+            //Get current pricing
+            var pricingInfo = sqlcontent.ExecuteGetPricing();
+            //Determine earlybird 
+            var eb = false;
+            if (pricingInfo[0].HaveEarlyBird)
+            {
+                DateTime ebTime = DateTime.Now.Date.AddHours(10);
+                if (currentTime.CompareTo(ebTime) <= 0)
+                {
+                    eb = true;
+                }
+            }
+            //Determine if already exist
+            var exist = sqlcontent.VerifyExist(plate.PlateNum);
+            //if the plate is exist, then return false status
+            if (exist)
+            {
+                return new AddPlate
+                {
+                    AddSuccess = false,
+                    Status = true,
+                    Error = "The car has already been in the parking lot."
+                };
+            }
+            var timeString = currentTime.ToString("yyyy-MM-dd HH:mm:ss");
+            var res = sqlcontent.ExecuteNonQuery($"INSERT INTO `parkinglot`.`plate` (`plate`, `in_time`, `is_earlybird`, `is_leased`, `is_paid`, `pricing_id`) VALUES ('{plate.PlateNum}', '{timeString}', {eb}, {lease}, {lease}, '{pricingInfo[0].PricingId}');");
+            if (res == "Success")
+            {
+                return new AddPlate
+                {
+                    AddSuccess = true,
+                    Status = true
+                };
+            }
+
+            return new AddPlate
+            {
+                AddSuccess = false,
+                Status = true,
+                Error = "Fail to upload plate"
+            };
+        }
     }
 }

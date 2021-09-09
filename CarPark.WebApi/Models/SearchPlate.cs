@@ -75,4 +75,16 @@ namespace CarPark.WebApi.Models
         public IEnumerable<SearchPlate> AllPlate{get;set;}
         public string Error { get; set; }
     }
+
+    public class AddPlate
+    {
+        public bool Status { get; set; }
+        public bool AddSuccess { get; set; }
+        public string Error { get; set; }
+    }
+
+    public class Plate
+    {
+        public string PlateNum { get; set; }
+    }
 }

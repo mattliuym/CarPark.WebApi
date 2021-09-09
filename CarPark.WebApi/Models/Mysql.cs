@@ -350,5 +350,30 @@ namespace CarPark.WebApi.Models
             }
             return true;
         }
+
+        public bool VerifyExist(string plate)
+        {
+            MySqlConnection con = new MySqlConnection(constr);
+            MySqlDataReader dataReader = null;
+            bool status = false;
+            try
+            {
+                con.Open();
+                string sql = $"Select * From parkinglot.plate WHERE plate='{plate}' AND is_left = false;";
+                MySqlCommand command = new MySqlCommand(sql, con);
+                dataReader = command.ExecuteReader();
+                if (dataReader != null && dataReader.HasRows)
+                {
+                    status = true;
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+
+            return status;
+        }
     }
 }
