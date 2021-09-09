@@ -348,6 +348,10 @@ namespace CarPark.WebApi.Models
                 Console.WriteLine(e);
                 throw;
             }
+            finally
+            {
+                con.Close();
+            }
             return true;
         }
 
@@ -371,6 +375,10 @@ namespace CarPark.WebApi.Models
             {
                 Console.WriteLine(e);
                 throw;
+            }
+            finally
+            {
+                con.Close();
             }
 
             return status;
