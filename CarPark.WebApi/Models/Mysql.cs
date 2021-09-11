@@ -383,5 +383,47 @@ namespace CarPark.WebApi.Models
 
             return status;
         }
+
+        public List<HistoryParking> ExcuteHistoryPlate()
+        {
+            MySqlConnection con = new MySqlConnection(constr);
+            MySqlDataReader dataReader = null;
+            List<HistoryParking> historyinfo = null;
+            try
+            {
+                con.Open();
+                string sql = "SELECT * FROM parkinglot.history;";
+                MySqlCommand command = new MySqlCommand(sql, con);
+                dataReader = command.ExecuteReader();
+                if (dataReader != null && dataReader.HasRows)
+                {
+                    historyinfo = new List<HistoryParking>();
+                    while (dataReader.Read())
+                    {
+                        historyinfo.Add(new HistoryParking()
+                        {
+                            EnterId = dataReader.GetInt32("enter_id"),
+                            Plate = dataReader.GetString("plate"),
+                            InTime = dataReader.GetDateTime("in_time"),
+                            OutTime = dataReader.GetDateTime("out_time"),
+                            IsMonthly = dataReader.GetBoolean("is_leased"), 
+                            Fees = dataReader.GetDecimal("fees")
+                        });
+                    }
+                }
+                dataReader.Close();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+            finally
+            {
+                con.Close();
+            }
+            return historyinfo;
+        }
+        
     }
 }

@@ -87,4 +87,28 @@ namespace CarPark.WebApi.Models
     {
         public string PlateNum { get; set; }
     }
+
+    public class ReleasePlate
+    {
+        //public int enterId { get; set; }
+        public bool Status { get; set; }
+        public bool ReleaseSuccess { get; set; }
+        public string Error { get; set; }
+    }
+
+    public class HistoryParking
+    {
+        public int EnterId{ get; set; }
+        public string Plate { get; set; }
+        public DateTime InTime { get; set; }
+        public DateTime OutTime { get; set; }
+        public bool IsMonthly{ get; set; } 
+        public decimal Fees { get; set; }
+    }
+    public class HistoryPlate
+    {
+        public bool Status { get; set; }
+        public IEnumerable<HistoryParking> History{get;set;}
+        public string Error { get; set; }
+    }
 }

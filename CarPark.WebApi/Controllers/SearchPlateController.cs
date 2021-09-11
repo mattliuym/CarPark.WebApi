@@ -90,7 +90,7 @@ namespace CarPark.WebApi.Controllers
                 };
             }
             //get plate info
-            var res = sqlcontent.ExecuteSearchPlate("SELECT * FROM parkinglot.plate WHERE 'is_left'=0");
+            var res = sqlcontent.ExecuteSearchPlate("SELECT * FROM parkinglot.plate WHERE is_left = false");
             //current time
             var currentTime = DateTime.Now;
             foreach (var t in res)
@@ -104,9 +104,9 @@ namespace CarPark.WebApi.Controllers
                     t.IsPaid = true;
                     t.IsMonthly = true;
                 }
-                else
+                else if(t.IsPaid&&t.IsMonthly)
                 {
-                    sqlcontent.ExecuteNonQuery($"UPDATE `parkinglot`.`plate` SET `is_leased` = '1', `is_paid` = '1' WHERE (`enter_id` = '{t.EnterId}');");
+                    sqlcontent.ExecuteNonQuery($"UPDATE `parkinglot`.`plate` SET `is_leased` = false, `is_paid` = false WHERE (`enter_id` = '{t.EnterId}');");
                     t.IsPaid = false;
                     t.IsMonthly = false;
                 }
@@ -130,6 +130,40 @@ namespace CarPark.WebApi.Controllers
                     IsPaid = res[index - 1].IsPaid,
                     IsMonthly = res[index - 1].IsMonthly,
                     timeLength = res[index - 1].timeLength
+                }),
+                Status = true
+            };
+        }
+
+        [HttpGet]
+        //Get all history parking information
+        public HistoryPlate GetHistoryInfo()
+        {
+            //verify login status
+            string token = Request.Cookies["token"];
+            var sqlcontent = new Mysql();
+            var tk = sqlcontent.VerifyToken(token);
+            if (!tk.Status)
+            {
+                return new HistoryPlate
+                {
+                    Status = false,
+                    Error = "Error, please login again!"
+                };
+            }         
+            //get info
+            var res = sqlcontent.ExcuteHistoryPlate();
+            
+            return new HistoryPlate()
+            {
+                History = Enumerable.Range(1,res.Count).Select(index=>new HistoryParking()
+                {
+                    EnterId = res[index - 1].EnterId,
+                    Plate = res[index - 1].Plate,
+                    Fees = res[index - 1].Fees,
+                    InTime = res[index - 1].InTime,
+                    OutTime = res[index-1].OutTime,
+                    IsMonthly = res[index - 1].IsMonthly
                 }),
                 Status = true
             };
@@ -197,5 +231,47 @@ namespace CarPark.WebApi.Controllers
                 Error = "Fail to upload plate"
             };
         }
+
+        [HttpPost]
+        public ReleasePlate ReleaseCar([FromBody] SearchPlate plateinfo)
+        {
+            string token = Request.Cookies["token"];
+            var sqlcontent = new Mysql();
+            var tk = sqlcontent.VerifyToken(token);
+            if (!tk.Status)
+            {
+                return new ReleasePlate
+                {
+                    Status = false,
+                    ReleaseSuccess = false,
+                    Error = "Error, please login again!"
+
+                };
+            }
+            
+            var currentTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+            var intime = plateinfo.InTime.ToString("yyyy-MM-dd HH:mm:ss");
+            var suc=sqlcontent.ExecuteNonQuery(
+                $"INSERT INTO `parkinglot`.`history` (`enter_id`,`plate`, `in_time`, `out_time`, `is_leased`,`fees`) VALUES ('{plateinfo.EnterId}','{plateinfo.Plate}', '{intime}', '{currentTime}', {plateinfo.IsMonthly},'{plateinfo.Fees}');");
+            if (suc == "Success")
+            {
+                var suc2 = sqlcontent.ExecuteNonQuery($"UPDATE `parkinglot`.`plate` SET `is_left` = true WHERE (`enter_id` = '{plateinfo.EnterId}');");
+                if (suc2 == "Success")
+                {
+                    return new ReleasePlate
+                    {
+                        Status = true,
+                        ReleaseSuccess = true,
+                    };
+                }
+            }
+            return new ReleasePlate
+            {
+                Status = true,
+                ReleaseSuccess = false,
+                Error = "Error, please try again!"
+            };
+        }
+        
     }
 }
