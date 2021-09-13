@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 namespace CarPark.WebApi.Models
 {
@@ -20,5 +21,12 @@ namespace CarPark.WebApi.Models
         public Boolean IsMonthly { get; set; }
         public decimal MonthlyFees { get; set; }
         public Boolean InUse { get; set; }
+    }
+
+    public class PricingStatus
+    {
+        public bool Status{ get; set; }
+        public IEnumerable<Pricing> Pricings{ get; set; }
+        public string Error { get; set; }
     }
 }

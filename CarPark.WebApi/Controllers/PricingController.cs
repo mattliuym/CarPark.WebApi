@@ -21,7 +21,7 @@ namespace CarPark.WebApi.Controllers
         public IEnumerable<Pricing> GetPricing()
         {
             Mysql dbcontent = new Mysql();
-            var res = dbcontent.ExecuteGetPricing();
+            var res = dbcontent.ExecuteGetPricing(true);
             return Enumerable.Range(1, res.Count).Select(index => new Pricing()
             {
                 PricingId = res[0].PricingId,
@@ -42,6 +42,47 @@ namespace CarPark.WebApi.Controllers
                 InUse = res[0].InUse
             }).ToArray();
         }
+
+        [HttpGet]
+        public PricingStatus GetAllPricing()
+        {
+            string token = Request.Cookies["token"];
+            var sqlcontent = new Mysql();
+            var tk = sqlcontent.VerifyToken(token);
+            if (!tk.Status)
+            {
+                return new PricingStatus()
+                {
+                    Status = false,
+                    Error = "Error, please login again!"
+                };
+            }
+            var res = sqlcontent.ExecuteGetPricing(false);
+            return new PricingStatus()
+            {
+                Status = true,
+                Pricings = Enumerable.Range(1, res.Count).Select(index => new Pricing()
+                {
+                    PricingId = res[0].PricingId,
+                    PricingName = res[0].PricingName,
+                    TotalPark = res[0].TotalPark,
+                    OpenTime = res[0].OpenTime,
+                    CloseTime = res[0].CloseTime,
+                    IsTwentyFour = res[0].IsTwentyFour,
+                    IsFlatRate = res[0].IsFlatRate,
+                    PricePh = res[0].PricePh,
+                    HaveEarlyBird = res[0].HaveEarlyBird,
+                    HaveMax = res[0].HaveMax,
+                    EarlyBirdPrice = res[0].EarlyBirdPrice,
+                    MaxPrice = res[0].MaxPrice,
+                    FreeBefore = res[0].FreeBefore,
+                    IsMonthly = res[0].IsMonthly,
+                    MonthlyFees = res[0].MonthlyFees,
+                    InUse = res[0].InUse
+                }).ToArray(),
+            };
+        }
+        
 
     }
 }

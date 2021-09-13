@@ -190,7 +190,7 @@ namespace CarPark.WebApi.Controllers
             //determine if monthly paid
             var lease = sqlcontent.VerifyLease(plate.PlateNum);
             //Get current pricing
-            var pricingInfo = sqlcontent.ExecuteGetPricing();
+            var pricingInfo = sqlcontent.ExecuteGetPricing(true);
             //Determine earlybird 
             var eb = false;
             if (pricingInfo[0].HaveEarlyBird)

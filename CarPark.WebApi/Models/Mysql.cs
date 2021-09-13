@@ -140,7 +140,7 @@ namespace CarPark.WebApi.Models
             
         }
         //Get pricing info
-        public List<Pricing> ExecuteGetPricing()
+        public List<Pricing> ExecuteGetPricing(bool s)
         { 
             MySqlConnection con = new MySqlConnection(constr);
             MySqlDataReader dataReader = null;
@@ -148,7 +148,16 @@ namespace CarPark.WebApi.Models
             try
             {
                 con.Open();
-                string sql = "SELECT * FROM parkinglot.pricing_plans where in_use=1";
+                string sql;
+                if (s)
+                {
+                    sql = "SELECT * FROM parkinglot.pricing_plans where in_use=1";
+                }
+                else
+                {
+                    sql = "SELECT * FROM parkinglot.pricing_plans;";
+                }
+                
                 MySqlCommand command = new MySqlCommand(sql, con);
                 dataReader = command.ExecuteReader();
                 if (dataReader != null && dataReader.HasRows)

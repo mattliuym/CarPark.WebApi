@@ -20,7 +20,7 @@ namespace CarPark.WebApi.Models
         {
             decimal fees;
             Mysql sqlData = new Mysql();
-            List<Pricing> arrPricing = sqlData.ExecuteGetPricing();
+            List<Pricing> arrPricing = sqlData.ExecuteGetPricing(true);
             Pricing priceInfo = arrPricing[0];
 
             //verify if the car needs to pay
