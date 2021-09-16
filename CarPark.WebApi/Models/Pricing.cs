@@ -29,4 +29,11 @@ namespace CarPark.WebApi.Models
         public IEnumerable<Pricing> Pricings{ get; set; }
         public string Error { get; set; }
     }
+
+    public class UploadPricing
+    {
+        public bool Status{ get; set; }
+        public bool Public { get; set; }
+        public string Error { get; set; }
+    }
 }

@@ -433,6 +433,50 @@ namespace CarPark.WebApi.Models
             }
             return historyinfo;
         }
-        
+        //change pricing in use status. if there is an using plan, disable it.
+        public bool ExcutePricingChange(int pid)
+        {
+            MySqlConnection con = new MySqlConnection(constr);
+            MySqlDataReader dataReader = null;
+            try
+            {
+                con.Open();
+                string sql = "SELECT pricing_id FROM parkinglot.pricing_plans WHERE in_use=true;";
+                MySqlCommand command = new MySqlCommand(sql, con);
+                dataReader = command.ExecuteReader();
+                if (dataReader != null && dataReader.HasRows)
+                {
+                    while (dataReader.Read())
+                    {
+                        var id = dataReader.GetInt32("pricing_id");
+                        string sql2 =
+                            $"UPDATE `parkinglot`.`pricing_plans` SET `in_use` = false WHERE (`pricing_id` = '{id}');";
+                        var suc = ExecuteNonQuery(sql2);
+                        if (suc == "Success")
+                        {
+                            string sql3=$"UPDATE `parkinglot`.`pricing_plans` SET `in_use` = true WHERE (`pricing_id` = '{pid}');";
+                            
+                            return ExecuteNonQuery(sql3) == "Success";
+                        }
+                        else
+                        {
+                            return false;
+                        }
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+            finally{
+            {
+                con.Close();
+            }}
+            string sql4=$"UPDATE `parkinglot`.`pricing_plans` SET `in_use` = true WHERE (`pricing_id` = '{pid}');";
+            return ExecuteNonQuery(sql4) == "Success";;
+        }
+
     }
 }
