@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Data;
 using Microsoft.AspNetCore.Mvc;
 using MySql.Data;
@@ -476,6 +477,45 @@ namespace CarPark.WebApi.Models
             }}
             string sql4=$"UPDATE `parkinglot`.`pricing_plans` SET `in_use` = true WHERE (`pricing_id` = '{pid}');";
             return ExecuteNonQuery(sql4) == "Success";;
+        }
+
+        public List<LeaseInfo> ExecuteAllLease()
+        {
+            MySqlConnection con = new MySqlConnection(constr);
+            MySqlDataReader dataReader = null;
+            List<LeaseInfo> leaseinfo = null;
+            try
+            {
+                con.Open();
+                var sql = "SELECT * FROM parkinglot.parking_lease;";
+                MySqlCommand command = new MySqlCommand(sql, con);
+                dataReader = command.ExecuteReader();
+                if (dataReader != null && dataReader.HasRows)
+                {
+                    leaseinfo = new List<LeaseInfo>();
+                    while (dataReader.Read())
+                    {
+                        leaseinfo.Add(new LeaseInfo()
+                        {
+                            LeaseId = dataReader.GetInt32("lease_id"),
+                            Plate = dataReader.GetString("plate"),
+                            Expiry = dataReader.GetDateTime("expired_date"),
+                            Valid = dataReader.GetBoolean("is_valid")
+                        });
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+            finally
+            {
+                con.Close();
+            }
+            
+            return leaseinfo;
         }
 
     }
