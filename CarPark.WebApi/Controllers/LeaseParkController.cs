@@ -47,9 +47,23 @@ namespace CarPark.WebApi.Controllers
         public AppendLease AddLease([FromBody] LeaseInfo p)
         {
             var sqlcontent = new Mysql();
-            var res = sqlcontent.ExecuteNonQuery(
-                $"INSERT INTO `parkinglot`.`parking_lease` (`plate`, `expired_date`, `is_valid`) VALUES ('{p.Plate}', '{p.Expiry.ToString("yyyy-MM-dd")}', {p.Valid});");
-            if (res == "Success")
+            string res;
+            string res1;
+            if (p.LeaseId == 0)
+            {
+                res = sqlcontent.ExecuteNonQuery(
+                    $"INSERT INTO `parkinglot`.`parking_lease` (`plate`, `expired_date`, `is_valid`) VALUES ('{p.Plate}', '{p.Expiry.ToString("yyyy-MM-dd")}', {p.Valid});");
+                res1 = "Success";
+            }
+            else
+            {
+                res = sqlcontent.ExecuteNonQuery(
+                    $"UPDATE `parkinglot`.`parking_lease` SET `expired_date` = '{p.Expiry.ToString("yyyy-MM-dd")}' WHERE (`lease_id` = {p.LeaseId});");
+                res1 = sqlcontent.ExecuteNonQuery(
+                    $"UPDATE `parkinglot`.`parking_lease` SET `expired_date` = '{p.Expiry.ToString("yyyy-MM-dd")}', `is_valid` = {p.Valid} WHERE (`lease_id` = {p.LeaseId});");
+            }
+
+            if (res == "Success" && res1 =="Success")
             {
                 return new AppendLease()
                 {
@@ -61,7 +75,7 @@ namespace CarPark.WebApi.Controllers
                 {
                     Status = true,
                     Public = false,
-                    Error = "Fail to action, please retry!"
+                    Error = "Action failed, please retry!"
                 };
         }
     }

@@ -13,8 +13,10 @@ namespace CarPark.WebApi
     {
         public static void Main(string[] args)
         {
-
+            var t = new TimerHelper();
+            t.THelper();
             CreateHostBuilder(args).Build().Run();
+
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
