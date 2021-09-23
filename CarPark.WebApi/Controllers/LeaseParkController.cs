@@ -78,5 +78,21 @@ namespace CarPark.WebApi.Controllers
                     Error = "Action failed, please retry!"
                 };
         }
+
+        [HttpGet]
+        public LeaseInfo SearchLease(string p)
+        {
+            var sqlcontent = new Mysql();
+            var res = sqlcontent.ExecuteOneLease($"SELECT * FROM parkinglot.parking_lease WHERE plate='{p}';");
+            if (res != null)
+            {
+                return res[0];
+            }
+            return new LeaseInfo()
+            {
+                LeaseId = 0
+            };
+
+        }
     }
 }

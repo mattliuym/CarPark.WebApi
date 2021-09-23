@@ -517,6 +517,44 @@ namespace CarPark.WebApi.Models
             
             return leaseinfo;
         }
+        
+        public List<LeaseInfo> ExecuteOneLease(string sql)
+        {
+            MySqlConnection con = new MySqlConnection(constr);
+            MySqlDataReader dataReader = null;
+            List<LeaseInfo> leaseinfo = null;
+            try
+            {
+                con.Open();
+                MySqlCommand command = new MySqlCommand(sql, con);
+                dataReader = command.ExecuteReader();
+                if (dataReader != null && dataReader.HasRows)
+                {
+                    leaseinfo = new List<LeaseInfo>();
+                    while (dataReader.Read())
+                    {
+                        leaseinfo.Add(new LeaseInfo()
+                        {
+                            LeaseId = dataReader.GetInt32("lease_id"),
+                            Plate = dataReader.GetString("plate"),
+                            Expiry = dataReader.GetDateTime("expired_date"),
+                            Valid = dataReader.GetBoolean("is_valid")
+                        });
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+            finally
+            {
+                con.Close();
+            }
+            
+            return leaseinfo;
+        }
 
     }
 }
