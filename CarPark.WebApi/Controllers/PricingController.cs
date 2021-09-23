@@ -105,7 +105,7 @@ namespace CarPark.WebApi.Controllers
             else
             {
                 res = sqlcontent.ExecuteNonQuery(
-                    $"UPDATE `parkinglot`.`pricing_plans` SET `pricing_name` = '{p.PricingName}', `total_park` = '{p.TotalPark}', `open_time` = '{p.OpenTime}', `close_time` = '{p.CloseTime}', `is_twentyfour` = {p.IsTwentyFour}, `is_flatrate` = {p.IsFlatRate}, `price_ph` = '{p.PricePh}', `have_earlybird` = {p.HaveEarlyBird}, `earlybird_price` = '{p.EarlyBirdPrice}', `have_max` = {p.HaveMax}, `max_price` = '{p.MaxPrice}', `free_before` = '{p.FreeBefore}', `is_paymonthly` = {p.IsMonthly} WHERE (`pricing_id` = '{p.PricingId}');");
+                    $"UPDATE `parkinglot`.`pricing_plans` SET `pricing_name` = '{p.PricingName}', `total_park` = '{p.TotalPark}', `open_time` = '{p.OpenTime}', `close_time` = '{p.CloseTime}', `is_twentyfour` = {p.IsTwentyFour}, `is_flatrate` = {p.IsFlatRate}, `price_ph` = '{p.PricePh}', `have_earlybird` = {p.HaveEarlyBird}, `earlybird_price` = '{p.EarlyBirdPrice}', `have_max` = {p.HaveMax}, `max_price` = '{p.MaxPrice}', `free_before` = '{p.FreeBefore}', `is_paymonthly` = {p.IsMonthly},`monthly_fee` = {p.MonthlyFees} WHERE (`pricing_id` = '{p.PricingId}');");
             }
             if (res == "Success")
             {
