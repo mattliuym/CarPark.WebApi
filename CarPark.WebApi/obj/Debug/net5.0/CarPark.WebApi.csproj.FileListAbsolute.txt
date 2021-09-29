@@ -42,3 +42,4 @@
 /Users/liuyiming/RiderProjects/CarPark.WebApi/CarPark.WebApi/bin/Debug/net5.0/System.Formats.Asn1.dll
 /Users/liuyiming/RiderProjects/CarPark.WebApi/CarPark.WebApi/bin/Debug/net5.0/System.Security.Cryptography.Pkcs.dll
 /Users/liuyiming/RiderProjects/CarPark.WebApi/CarPark.WebApi/bin/Debug/net5.0/runtimes/win/lib/netcoreapp3.1/System.Security.Cryptography.Pkcs.dll
+/Users/liuyiming/RiderProjects/CarPark.WebApi/CarPark.WebApi/bin/Debug/net5.0/Stripe.net.dll

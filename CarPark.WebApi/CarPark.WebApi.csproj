@@ -7,6 +7,7 @@
     <ItemGroup>
         <PackageReference Include="JWT" Version="8.4.0-beta1" />
         <PackageReference Include="MySql.Data" Version="8.0.26" />
+        <PackageReference Include="Stripe.net" Version="39.69.0" />
         <PackageReference Include="Swashbuckle.AspNetCore" Version="5.6.3" />
         <PackageReference Include="System.Security.Cryptography.Pkcs" Version="6.0.0-preview.7.21377.19" />
         <PackageReference Include="System.Security.Cryptography.X509Certificates" Version="4.3.2" />

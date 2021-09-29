@@ -24,20 +24,24 @@ namespace CarPark.WebApi.Controllers
         {
             Mysql sqlcontent = new Mysql();
             var res = sqlcontent.ExecuteSearchPlate($"SELECT * FROM parkinglot.plate where plate='{s}'&& is_left=0;");
-            //verify lease condition.
-            var lease = sqlcontent.VerifyLease(res[0].Plate);
-            //reset lease condition
-            if (lease)
+            //if the car has paid monthly
+            if (res[0].IsMonthly)
             {
-                sqlcontent.ExecuteNonQuery($"UPDATE `parkinglot`.`plate` SET `is_leased` = '1', `is_paid` = '1' WHERE (`enter_id` = '{res[0].EnterId}');");
-                res[0].IsPaid = true;
-                res[0].IsMonthly = true;
-            }
-            else
-            {
-                sqlcontent.ExecuteNonQuery($"UPDATE `parkinglot`.`plate` SET `is_leased` = '0', `is_paid` = '0' WHERE (`enter_id` = '{res[0].EnterId}');");
-                res[0].IsPaid = false;
-                res[0].IsMonthly = false;
+                //verify lease condition.
+                var lease = sqlcontent.VerifyLease(res[0].Plate);
+                //reset lease condition
+                if (lease)
+                {
+                    sqlcontent.ExecuteNonQuery($"UPDATE `parkinglot`.`plate` SET `is_leased` = '1', `is_paid` = '1' WHERE (`enter_id` = '{res[0].EnterId}');");
+                    res[0].IsPaid = true;
+                    res[0].IsMonthly = true;
+                }
+                else
+                {
+                    sqlcontent.ExecuteNonQuery($"UPDATE `parkinglot`.`plate` SET `is_leased` = '0', `is_paid` = '0' WHERE (`enter_id` = '{res[0].EnterId}');");
+                    res[0].IsPaid = false;
+                    res[0].IsMonthly = false;
+                }
             }
             //current time
             var currentTime = DateTime.Now;

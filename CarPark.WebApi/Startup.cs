@@ -11,6 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
+using Stripe;
 
 namespace CarPark.WebApi
 {
@@ -44,7 +45,7 @@ namespace CarPark.WebApi
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "CarPark.WebApi v1"));
             }
 
-
+            StripeConfiguration.ApiKey = "sk_test_51JeYy8IkqIguFzWDuQZVW37mUu0sK3PSpARgNGfkkIudKQ7IsgK3AAjW54DNGfBaUEb6XIbCbuxWO34WDTV6MPT7007nAzMcRU";
             app.UseHttpsRedirection();
 
             app.UseRouting();
