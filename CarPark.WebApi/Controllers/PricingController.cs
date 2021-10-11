@@ -112,7 +112,7 @@ namespace CarPark.WebApi.Controllers
                 //if try to enable the new plan, then change the scheme status.
                 if (p.InUse)
                 {
-                    var change=sqlcontent.ExcutePricingChange(p.PricingId);
+                    var change=sqlcontent.ExcutePricingChange(p.PricingName);
                     if (change)
                     {
                         return new UploadPricing()
@@ -141,6 +141,28 @@ namespace CarPark.WebApi.Controllers
                 Public = false,
                 Error = res
             };
+        }
+
+        [HttpPost]
+        public UploadPricing DeletePricing ([FromBody] Pricing p)
+        {
+            var sqlcontent = new Mysql();
+            var res = sqlcontent.ExecuteNonQuery(
+                $"DELETE FROM `parkinglot`.`pricing_plans` WHERE (`pricing_id` = '{p.PricingId}');");
+            if (res == "Success")
+            {
+                return new UploadPricing()
+                {
+                    Status = true,
+                    Public = true
+                };
+            }
+            return new UploadPricing()
+                {
+                    Status = false,
+                    Public = false,
+                    Error = "Error! Please try again."
+                };
         }
     }
 }

@@ -435,7 +435,7 @@ namespace CarPark.WebApi.Models
             return historyinfo;
         }
         //change pricing in use status. if there is an using plan, disable it.
-        public bool ExcutePricingChange(int pid)
+        public bool ExcutePricingChange(string pname)
         {
             MySqlConnection con = new MySqlConnection(constr);
             MySqlDataReader dataReader = null;
@@ -450,12 +450,14 @@ namespace CarPark.WebApi.Models
                     while (dataReader.Read())
                     {
                         var id = dataReader.GetInt32("pricing_id");
+                        //change the 'in use' status to false.
                         string sql2 =
                             $"UPDATE `parkinglot`.`pricing_plans` SET `in_use` = false WHERE (`pricing_id` = '{id}');";
                         var suc = ExecuteNonQuery(sql2);
                         if (suc == "Success")
                         {
-                            string sql3=$"UPDATE `parkinglot`.`pricing_plans` SET `in_use` = true WHERE (`pricing_id` = '{pid}');";
+                            //change the in use status to true
+                            string sql3=$"UPDATE `parkinglot`.`pricing_plans` SET `in_use` = true WHERE (`pricing_name` = '{pname}');";
                             
                             return ExecuteNonQuery(sql3) == "Success";
                         }
@@ -475,7 +477,7 @@ namespace CarPark.WebApi.Models
             {
                 con.Close();
             }}
-            string sql4=$"UPDATE `parkinglot`.`pricing_plans` SET `in_use` = true WHERE (`pricing_id` = '{pid}');";
+            string sql4=$"UPDATE `parkinglot`.`pricing_plans` SET `in_use` = true WHERE (`pricing_name` = '{pname}');";
             return ExecuteNonQuery(sql4) == "Success";;
         }
 
